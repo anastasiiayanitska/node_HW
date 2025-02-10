@@ -1,4 +1,5 @@
 import express from "express";
+import pool from "./db.js";
 
 const app = express();
 const PORT = 3000;
@@ -30,29 +31,23 @@ app.listen(PORT, () => {
   console.log(`Server is listening: ${PORT}`);
 });
 
-import pool from './db.js';
-
-app.get('/products', async (req, res) => {
+app.get("/products", async (req, res) => {
   try {
-    const [rows] = await pool.query('SELECT * FROM products');
-    res.status(200).json(rows);
+    res.status(200).json(products);
   } catch (err) {
-    res.status(500).send('Ошибка при получении данных.');
+    res.status(500).send(err);
   }
 });
 
-
-app.post('/products', async (req, res) => {
+app.post("/products", async (req, res) => {
   const { name, price } = req.body;
   if (!name || !price) {
-    return res.status(400).send('Поля name и price обязательны.');
+    return res.status(400).send("The name and price fields are required.");
   }
 
   try {
-    const sql = 'INSERT INTO products (name, price) VALUES (?, ?)';
-    const [result] = await pool.query(sql, [name, price]);
-    res.status(201).send(`Продукт добавлен с ID: ${result.insertId}`);
+    res.status(201).send("Product added");
   } catch (err) {
-    res.status(500).send('Ошибка при добавлении продукта.');
+    res.status(500).send(err);
   }
 });
