@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>HW15</title>
+  </head>
+  <body>
+    <h1>Simple Chat App</h1>
+    <div id="messages"></div>
+    <form id="message-form">
+      <input
+        id="message-input"
+        autocomplete="off"
+        placeholder="Type a message"
+      />
+      <button type="submit">Send</button>
+    </form>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const socket = io();
+      const messageForm = document.getElementById("message-form");
+      const messageInput = document.getElementById("message-input");
+      const messagesDiv = document.getElementById("messages");
+
+      messageForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        if (messageInput.value) {
+          socket.emit("chat message", messageInput.value);
+          messageInput.value = "";
+        }
+      });
+
+      socket.on("chat message", (msg) => {
+        const messageElement = document.createElement("div");
+        messageElement.textContent = msg;
+        messagesDiv.appendChild(messageElement);
+      });
+    </script>
+  </body>
+</html>
